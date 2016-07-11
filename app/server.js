@@ -27,6 +27,11 @@ controller.setupWebserver(process.env.PORT || 3001, (err, webserver) => {
   });
 });
 
+// webhook reply
+controller.on('outgoing_webhook', (bot, message) => {
+  bot.replyPublic(message, 'Hi! Don\'t worry, I\'m always awake. http://giphy.com/gifs/emoji-gif-red-moon-TQPPLWqWdcQes');
+});
+
 // initialize yelp
 
 const yelp = new Yelp({
@@ -127,5 +132,5 @@ controller.hears(['food', 'hungry', 'eat', 'restaurant'], ['direct_message', 'di
 
 // otherwise, doesn't understand
 controller.hears('', ['direct_message', 'direct_mention', 'mention'], (bot, message) => {
-  bot.reply(message, 'Testing. Sorry, I\'m not sure what you\'re saying!');
+  bot.reply(message, 'Does it work. Sorry, I\'m not sure what you\'re saying!');
 });
