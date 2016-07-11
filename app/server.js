@@ -169,9 +169,10 @@ controller.hears(['map', 'direction', 'google', 'from'], ['direct_message', 'dir
   function askDestination(origin, convo) {
     convo.ask('Where is your destination?', (destination) => {
       convo.say(`Ok! I will find directions from ${origin.text} to ${destination.text}. One moment.`);
-      const gmapsapi = process.env.GMAP_API_KEY;
+      /* const gmapsapi = process.env.GMAP_API_KEY;
       const url = `https://maps.googleapis.com/maps/api/directions/json?origin=${origin.text}&destination=${destination.text}&key=${gmapsapi}`;
-      convo.say(url);
+      convo.say(url);*/
+      convo.next();
     });
   }
   bot.startConversation(message, askYes);
