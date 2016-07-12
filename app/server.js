@@ -83,7 +83,7 @@ controller.hears(['food', 'hungry', 'eat', 'restaurant'], ['direct_message', 'di
         // if don't understand, repeat
         default: true,
         callback: () => {
-          convo.say('What? I\'m not sure what you\'re saying.');
+          convo.say('What? I\'m not sure what you\'re saying. I\'ll ask again.');
           convo.repeat();
           convo.next();
         },
@@ -107,9 +107,9 @@ controller.hears(['food', 'hungry', 'eat', 'restaurant'], ['direct_message', 'di
       .then((data) => {
         if (data.businesses.length === 0) {
           // if length 0, no search results
-          convo.say(`Sorry! I couldn't find any ${food.text} near ${place.text}!`);
+          convo.say(`Sorry! I couldn't find any ${food.text} near ${place.text}.`);
         } else {
-          // if results exist, yse first one
+          // if results exist, use first one
           const replyAttachment = {
             text: `Rating: ${data.businesses[0].rating}`,
             attachments: [{
@@ -120,7 +120,7 @@ controller.hears(['food', 'hungry', 'eat', 'restaurant'], ['direct_message', 'di
               color: '#7CD197',
             }],
           };
-          bot.reply(message, replyAttachment);
+          convo.say(replyAttachment);
           convo.next();
         }
       })
