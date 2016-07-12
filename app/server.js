@@ -191,11 +191,14 @@ controller.hears(['map', 'direction', 'google', 'from'], ['direct_message', 'dir
           // if results exist, use first one
           convo.say('I think I found something!');
           const replyAttachment = {
-            text: 'Summary of directions',
             attachments: [{
-              title: `${origin.text} to ${destination.text}.`,
-              text: `${mapdata.routes[0].legs[0].distance.text}`,
-              color: '#7CD197',
+              title: 'Summary of directions',
+              text: `Start: ${mapdata.routes[0].legs[0].start_address}\n
+              End: ${mapdata.routes[0].legs[0].end_address}\n
+              Travel distance: ${mapdata.routes[0].legs[0].distance.text}\n
+              Travel duration: ${mapdata.routes[0].legs[0].duration.text}\n
+              Steps: ${mapdata.routes[0].legs[0].steps.length}`,
+              color: '#C51D1D',
             }],
           };
           convo.say(replyAttachment);
