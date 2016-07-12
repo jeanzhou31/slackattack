@@ -46,6 +46,7 @@ const yelp = new Yelp({
   token_secret: process.env.YELP_TOKEN_SECRET,
 });
 
+
 // hello response
 controller.hears(['hello', 'hi', 'howdy'], ['direct_message', 'direct_mention', 'mention'], (bot, message) => {
   bot.api.users.info({ user: message.user }, (err, res) => {
@@ -60,8 +61,8 @@ controller.hears(['hello', 'hi', 'howdy'], ['direct_message', 'direct_mention', 
 // help
 controller.hears('help', ['direct_message', 'direct_mention', 'mention'], (bot, message) => {
   bot.reply(message, 'Hi! I\'m jean_bot!');
-  bot.reply(message, 'I can give you food recommendations and map directions.');
-  bot.reply(message, 'I can also play a number game, if you want!');
+  bot.reply(message, 'I can give you food recommendations (say \'food\') and map directions (say \'map\').');
+  bot.reply(message, 'I can also play a number game (say \'game\'), if you want!');
 });
 
 // food recommendations using yelp
@@ -314,5 +315,4 @@ controller.hears(['number', 'game', 'guess', 'play'], ['direct_message', 'direct
 // doesn't understand
 controller.on(['direct_message', 'direct_mention', 'mention'], (bot, message) => {
   bot.reply(message, 'Sorry, I\'m not sure what you\'re saying!');
-  bot.reply(message, 'Updated!');
 });
