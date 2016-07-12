@@ -301,11 +301,11 @@ controller.hears(['number', 'game', 'guess', 'play'], ['direct_message', 'direct
       } else if (guess.text > NUM) {
         convo.say('Nope, lower!');
         convo.repeat();
-      } else if (guess.text === NUM) {
+      } else if (guess.text === toString(NUM)) {
         convo.say(`Yes, you got it! The number is ${intguess}!`);
         convo.say('You\'re good at this! Thank you for playing with me.');
       } else {
-        convo.say('That\'s not a valid guess! Guess an integer number from 1 - 100.');
+        convo.say('That\'s not a valid guess! Guess a number.');
         convo.repeat();
       }
       convo.next();
@@ -318,5 +318,5 @@ controller.hears(['number', 'game', 'guess', 'play'], ['direct_message', 'direct
 // doesn't understand
 controller.on(['direct_message', 'direct_mention', 'mention'], (bot, message) => {
   bot.reply(message, 'Sorry, I\'m not sure what you\'re saying!');
-  bot.reply(message, 'Updated!!');
+  bot.reply(message, 'Updated!');
 });
