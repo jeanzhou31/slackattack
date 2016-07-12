@@ -261,7 +261,7 @@ controller.hears(['number', 'game', 'guess', 'play'], ['direct_message', 'direct
           convo.say('Great! Let\'s start!');
           convo.say('If you ever want to stop, just say \'quit\'.');
           const NUM = Math.floor((Math.random() * 100) + 1);
-          convo.say(NUM);
+          convo.say(`The number is ${NUM}.`);
           startGame(NUM, convo);
           convo.next();
         },
@@ -342,5 +342,5 @@ controller.hears(['number', 'game', 'guess', 'play'], ['direct_message', 'direct
 // doesn't understand
 controller.on(['direct_message', 'direct_mention', 'mention'], (bot, message) => {
   bot.reply(message, 'Sorry, I\'m not sure what you\'re saying!');
-  bot.reply(message, 'Updated!!');
+  bot.reply(message, 'Updated!');
 });
