@@ -194,36 +194,42 @@ controller.hears(['map', 'direction', 'google', 'from'], ['direct_message', 'dir
           convo.next();
         } else {
           const mapdata = JSON.parse(body);
-          // if results exist, use first one
-          convo.say('I think I found something!');
-          const replyAttachment = {
-            attachments: [{
-              title: 'Summary',
-              text: `Start: ${mapdata.routes[0].legs[0].start_address}\n` +
-              `End: ${mapdata.routes[0].legs[0].end_address}\n` +
-              `Travel distance: ${mapdata.routes[0].legs[0].distance.text}\n` +
-              `Travel duration: ${mapdata.routes[0].legs[0].duration.text}`,
-              color: '#C51D1D',
-            }],
-          };
-          convo.say(replyAttachment);
-          let stepString = '';
-          mapdata.routes[0].legs[0].steps.forEach(step => {
-            stepString = `${stepString}\n ${step.html_instructions}`;
-          });
-          stepString = stepString.replace(/<(?:.|\n)*?>/gm, '');
-          const stepAttachment = {
-            attachments: [{
-              title: 'Directions',
-              text: `${stepString}`,
-              color: '#88a3de',
-            }],
-          };
-          convo.say(stepAttachment);
-          convo.next();
+          if (mapdata.status === 'NOT_FOUND') {
+            convo.say(`Sorry! I couldn't find directions from ${origin.text} to ${destination.text}.`);
+            convo.next();
+          } else {
+            // if results exist, use first one
+            convo.say('I think I found something!');
+            const replyAttachment = {
+              attachments: [{
+                title: 'Summary',
+                text: `Start: ${mapdata.routes[0].legs[0].start_address}\n` +
+                `End: ${mapdata.routes[0].legs[0].end_address}\n` +
+                `Travel distance: ${mapdata.routes[0].legs[0].distance.text}\n` +
+                `Travel duration: ${mapdata.routes[0].legs[0].duration.text}`,
+                color: '#C51D1D',
+              }],
+            };
+            convo.say(replyAttachment);
+            let stepString = '';
+            mapdata.routes[0].legs[0].steps.forEach(step => {
+              stepString = `${stepString}\n ${step.html_instructions}`;
+            });
+            // remove html tags
+            // regular expression taken from: http://stackoverflow.com/questions/822452/strip-html-from-text-javascript
+            stepString = stepString.replace(/<(?:.|\n)*?>/gm, '');
+            const stepAttachment = {
+              attachments: [{
+                title: 'Directions',
+                text: `${stepString}`,
+                color: '#88a3de',
+              }],
+            };
+            convo.say(stepAttachment);
+            convo.next();
+          }
         }
       });
-      convo.next();
     });
   }
   bot.startConversation(message, askYes);
