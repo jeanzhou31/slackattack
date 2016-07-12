@@ -261,8 +261,7 @@ controller.hears(['number', 'game', 'guess', 'play'], ['direct_message', 'direct
           convo.say('Great! Let\'s start!');
           convo.say('If you ever want to stop, just say \'quit\'.');
           const NUM = Math.floor((Math.random() * 100) + 1);
-          convo.say('Guess the number I\'m thinking of, from 1 - 100!');
-          convo.say(`The number is ${NUM}.`);
+          convo.say('I\'m thinking of an integer from 1 - 100.');
           startGame(NUM, convo);
           convo.next();
         },
@@ -290,8 +289,6 @@ controller.hears(['number', 'game', 'guess', 'play'], ['direct_message', 'direct
   function startGame(NUM, convo) {
     convo.ask('Make a guess!', (guess) => {
       const intguess = parseInt(guess.text, 10);
-      convo.say(`The guess is ${guess.text}`);
-      convo.say(`The intguess is ${intguess}`);
       if (guess.text === 'quit') {
         convo.say('Okay, bye! Thank you for playing with me.');
         convo.say(`If you're curious, the number was ${NUM}.`);

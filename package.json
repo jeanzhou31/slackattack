@@ -21,11 +21,13 @@
   },
   "devDependencies": {
     "babel-eslint": "^6.0.4",
+    "botkit-storage-mongo": "^1.0.3",
     "eslint": "^2.12.0",
     "eslint-config-airbnb": "^9.0.1",
     "eslint-plugin-import": "^1.8.1",
     "eslint-plugin-jsx-a11y": "^1.4.2",
     "eslint-plugin-react": "^5.1.1",
+    "mongodb": "^1.4.40",
     "nodemon": "^1.9.2",
     "request": "^2.73.0"
   }
