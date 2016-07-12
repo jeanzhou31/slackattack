@@ -120,6 +120,7 @@ controller.hears(['food', 'hungry', 'eat', 'restaurant'], ['direct_message', 'di
               color: '#7CD197',
             }],
           };
+          convo.say('I found something!');
           convo.say(replyAttachment);
           convo.next();
         }
