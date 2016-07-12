@@ -211,7 +211,7 @@ controller.hears(['map', 'direction', 'google', 'from'], ['direct_message', 'dir
           mapdata.routes[0].legs[0].steps.forEach(step => {
             stepString = `${stepString}\n ${step.html_instructions}`;
           });
-          stepString.replace(/<(?:.|\n)*?>/gm, '');
+          stepString = stepString.replace(/<(?:.|\n)*?>/gm, '');
           const stepAttachment = {
             attachments: [{
               title: 'Directions',
@@ -232,5 +232,5 @@ controller.hears(['map', 'direction', 'google', 'from'], ['direct_message', 'dir
 // doesn't understand
 controller.on(['direct_message', 'direct_mention', 'mention'], (bot, message) => {
   bot.reply(message, 'Sorry, I\'m not sure what you\'re saying!');
-  bot.reply(message, 'Updated!');
+  bot.reply(message, 'Updated!!');
 });
