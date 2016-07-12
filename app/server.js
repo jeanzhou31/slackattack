@@ -261,6 +261,7 @@ controller.hears(['number', 'game', 'guess', 'play'], ['direct_message', 'direct
           convo.say('Great! Let\'s start!');
           convo.say('If you ever want to stop, just say \'quit\'.');
           const NUM = Math.floor((Math.random() * 100) + 1);
+          convo.say('Guess the number I\'m thinking of, from 1 - 100!');
           convo.say(`The number is ${NUM}.`);
           startGame(NUM, convo);
           convo.next();
@@ -287,54 +288,26 @@ controller.hears(['number', 'game', 'guess', 'play'], ['direct_message', 'direct
   }
   // play number game
   function startGame(NUM, convo) {
-    convo.ask('Guess the number I\'m thinking of, from 1 - 100!', (guess) => {
-      // check if guess is an integer
-      // taken from: http://stackoverflow.com/questions/14636536/how-to-check-if-a-variable-is-an-integer-in-javascript
+    convo.ask('Make a guess!', (guess) => {
       const intguess = parseInt(guess.text, 10);
       convo.say(`The guess is ${guess.text}`);
       convo.say(`The intguess is ${intguess}`);
-      if (intguess < NUM) {
+      if (guess === 'quit') {
+        convo.say('Okay, bye! Thank you for playing with me.');
+        convo.say(`If you're curious, the number was ${NUM}.`);
+      } else if (intguess < NUM) {
         convo.say('Nope, higher!');
+        convo.repeat();
       } else if (intguess > NUM) {
         convo.say('Nope, lower!');
+        convo.repeat();
       } else if (intguess === NUM) {
-        convo.say('Yes!');
+        convo.say(`Yes, you got it! The number is ${intguess}!`);
+        convo.say('You\'re good at this! Thank you for playing with me.');
       } else {
         convo.say('That\'s not a valid guess! Guess an integer number from 1 - 100.');
+        convo.repeat();
       }
-      convo.next();
-    });
-  }
-  // ask where user is
-  function askWhere(food, convo) {
-    convo.ask('And where are you?', (place) => {
-      convo.say(`Ok! I can try to find ${food.text} near ${place.text}. One moment.`);
-      // use yelp api to get search data
-      yelp.search({ term: `${food.text}`, location: `${place.text}` })
-      .then((data) => {
-        if (data.businesses.length === 0) {
-          // if length 0, no search results
-          convo.say(`Sorry! I couldn't find any ${food.text} near ${place.text}.`);
-        } else {
-          // if results exist, use first one
-          const replyAttachment = {
-            text: `Rating: ${data.businesses[0].rating}`,
-            attachments: [{
-              title: `${data.businesses[0].name}`,
-              title_link: `${data.businesses[0].url}`,
-              text: `${data.businesses[0].snippet_text}`,
-              image_url: `${data.businesses[0].image_url}`,
-              color: '#7CD197',
-            }],
-          };
-          convo.say(replyAttachment);
-          convo.next();
-        }
-      })
-      .catch((err) => {
-        // if error, then due to invalid location
-        convo.say(`Sorry! I couldn't find your location, ${place.text}.`);
-      });
       convo.next();
     });
   }
