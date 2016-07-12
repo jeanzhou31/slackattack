@@ -2,6 +2,8 @@
 
 import botkit from 'botkit';
 import Yelp from 'yelp';
+const request = require('request');
+// used guide for request module: http://blog.modulus.io/node.js-tutorial-how-to-use-request-module
 
 console.log('starting bot');
 
@@ -179,6 +181,27 @@ controller.hears(['map', 'direction', 'google', 'from'], ['direct_message', 'dir
       const gmapsapi = process.env.GMAP_API_KEY;
       const url = `https://maps.googleapis.com/maps/api/directions/json?origin=${origin.text}&destination=${destination.text}&key=${gmapsapi}`;
       convo.say(url);
+      request(url, (error, response, body) => {
+        // Check for error
+        if (error || response.statusCode !== 200) {
+          convo.say(`Sorry! I couldn't find directions from ${origin.text} to ${destination.text}.`);
+          convo.next();
+        } else {
+          const mapdata = JSON.parse(body);
+          // if results exist, use first one
+          convo.say('I think I found something!');
+          const replyAttachment = {
+            text: 'Summary of directions',
+            attachments: [{
+              title: `${origin.text} to ${destination.text}.`,
+              text: `${mapdata.routes[0].legs[0].distance.text}`,
+              color: '#7CD197',
+            }],
+          };
+          convo.say(replyAttachment);
+          convo.next();
+        }
+      });
       convo.next();
     });
   }
@@ -188,5 +211,5 @@ controller.hears(['map', 'direction', 'google', 'from'], ['direct_message', 'dir
 // doesn't understand
 controller.hears('', ['direct_message', 'direct_mention', 'mention'], (bot, message) => {
   bot.reply(message, 'Sorry, I\'m not sure what you\'re saying!');
-  bot.reply(message, 'Updated!!!');
+  bot.reply(message, 'Updated!');
 });
