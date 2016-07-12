@@ -298,10 +298,10 @@ controller.hears(['number', 'game', 'guess', 'play'], ['direct_message', 'direct
       } else if (guess.text !== intguess.toString()) {
         convo.say('That\'s not a valid guess! Guess an integer number from 1 - 100.');
         convo.repeat();
-      } else if (guess.text < NUM) {
+      } else if (guess.text < NUM && guess.text > 0) {
         convo.say('Nope, higher!');
         convo.repeat();
-      } else if (guess.text > NUM) {
+      } else if (guess.text > NUM && guess.text < 101) {
         convo.say('Nope, lower!');
         convo.repeat();
       } else if (guess.text === NUM.toString()) {
