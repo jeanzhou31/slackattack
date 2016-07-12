@@ -110,6 +110,7 @@ controller.hears(['food', 'hungry', 'eat', 'restaurant'], ['direct_message', 'di
           convo.say(`Sorry! I couldn't find any ${food.text} near ${place.text}.`);
         } else {
           // if results exist, use first one
+          convo.say('I think I found something!');
           const replyAttachment = {
             text: `Rating: ${data.businesses[0].rating}`,
             attachments: [
@@ -189,5 +190,5 @@ controller.hears(['map', 'direction', 'google', 'from'], ['direct_message', 'dir
 // doesn't understand
 controller.hears('', ['direct_message', 'direct_mention', 'mention'], (bot, message) => {
   bot.reply(message, 'Sorry, I\'m not sure what you\'re saying!');
-  bot.reply(message, 'Updated!');
+  bot.reply(message, 'Updated!!');
 });
