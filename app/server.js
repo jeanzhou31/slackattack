@@ -194,10 +194,9 @@ controller.hears(['map', 'direction', 'google', 'from'], ['direct_message', 'dir
             attachments: [{
               title: 'Summary of directions',
               text: `Start: ${mapdata.routes[0].legs[0].start_address}\n
-              End: ${mapdata.routes[0].legs[0].end_address}\n
-              Travel distance: ${mapdata.routes[0].legs[0].distance.text}\n
-              Travel duration: ${mapdata.routes[0].legs[0].duration.text}\n
-              Steps: ${mapdata.routes[0].legs[0].steps.length}`,
+End: ${mapdata.routes[0].legs[0].end_address}\n
+Travel distance: ${mapdata.routes[0].legs[0].distance.text}\n
+Travel duration: ${mapdata.routes[0].legs[0].duration.text}`,
               color: '#C51D1D',
             }],
           };
@@ -214,5 +213,5 @@ controller.hears(['map', 'direction', 'google', 'from'], ['direct_message', 'dir
 // doesn't understand
 controller.hears('', ['direct_message', 'direct_mention', 'mention'], (bot, message) => {
   bot.reply(message, 'Sorry, I\'m not sure what you\'re saying!');
-  bot.reply(message, 'Updated!');
+  bot.reply(message, 'Updated!!!');
 });
