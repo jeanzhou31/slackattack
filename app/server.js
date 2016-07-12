@@ -31,7 +31,13 @@ controller.setupWebserver(process.env.PORT || 3001, (err, webserver) => {
 
 // webhook reply
 controller.on('outgoing_webhook', (bot, message) => {
-  bot.replyPublic(message, 'Hi! Don\'t worry, I\'m always awake. http://giphy.com/gifs/emoji-gif-red-moon-TQPPLWqWdcQes');
+  const replyAttachment = {
+    text: 'Hi! Don\'t worry, I\'m always awake.',
+    attachments: [{
+      image_url: 'http://giphy.com/gifs/emoji-gif-red-moon-TQPPLWqWdcQes',
+    }],
+  };
+  bot.replyPublic(message, replyAttachment);
 });
 
 // initialize yelp
@@ -193,14 +199,26 @@ controller.hears(['map', 'direction', 'google', 'from'], ['direct_message', 'dir
           const replyAttachment = {
             attachments: [{
               title: 'Summary of directions',
-              text: `Start: ${mapdata.routes[0].legs[0].start_address}\n
-End: ${mapdata.routes[0].legs[0].end_address}\n
-Travel distance: ${mapdata.routes[0].legs[0].distance.text}\n
-Travel duration: ${mapdata.routes[0].legs[0].duration.text}`,
+              text: `Start: ${mapdata.routes[0].legs[0].start_address}\n` +
+              `End: ${mapdata.routes[0].legs[0].end_address}\n` +
+              `Travel distance: ${mapdata.routes[0].legs[0].distance.text}\n` +
+              `Travel duration: ${mapdata.routes[0].legs[0].duration.text}`,
               color: '#C51D1D',
             }],
           };
           convo.say(replyAttachment);
+          let stepString = '';
+          mapdata.routes[0].legs[0].steps.forEach(step => {
+            stepString = `${stepString}\n ${step.html_instructions}`;
+          });
+          const stepAttachment = {
+            attachments: [{
+              title: 'Steps',
+              text: `${stepString}`,
+              color: '#C51D1D',
+            }],
+          };
+          convo.say(stepAttachment);
           convo.next();
         }
       });
@@ -211,7 +229,7 @@ Travel duration: ${mapdata.routes[0].legs[0].duration.text}`,
 });
 
 // doesn't understand
-controller.hears('', ['direct_message', 'direct_mention', 'mention'], (bot, message) => {
+controller.on(['direct_message', 'direct_mention', 'mention'], (bot, message) => {
   bot.reply(message, 'Sorry, I\'m not sure what you\'re saying!');
-  bot.reply(message, 'Updated!!!');
+  bot.reply(message, 'Updated!');
 });
