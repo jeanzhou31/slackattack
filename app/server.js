@@ -1,4 +1,7 @@
-// example bot
+// Jean Zhou
+// jean_bot -- a bot that can give food recommendations, map directions, and play a number game
+
+// majority of code modeled after code from: https://github.com/howdyai/botkit
 
 import botkit from 'botkit';
 import Yelp from 'yelp';
@@ -63,6 +66,7 @@ controller.hears(['hello', 'hi', 'howdy'], ['direct_message', 'direct_mention', 
 controller.hears('help', ['direct_message', 'direct_mention', 'mention'], (bot, message) => {
   bot.reply(message, 'Hi! I\'m jean_bot!');
   bot.reply(message, 'I can give you food recommendations and map directions.');
+  bot.reply(message, 'I can also play a number game, if you want!');
 });
 
 // food recommendations using yelp
@@ -145,35 +149,40 @@ controller.hears(['food', 'hungry', 'eat', 'restaurant'], ['direct_message', 'di
   bot.startConversation(message, askYes);
 });
 
-// gmaps
+// get map directions
 controller.hears(['map', 'direction', 'google', 'from'], ['direct_message', 'direct_mention', 'mention'], (bot, message) => {
+  // ask if user wants map directions
   function askYes(response, convo) {
     convo.ask('Would you like map directions?', [
       {
+        // if yes, continue
         pattern: bot.utterances.yes,
         callback: () => {
-          convo.say('Great! I will continue...');
+          convo.say('Great! I\'d love to help.');
           askOrigin(convo);
           convo.next();
         },
       },
       {
+        // if no, stop
         pattern: bot.utterances.no,
         callback: () => {
-          convo.say('Perhaps later.');
+          convo.say('I understand, perhaps later.');
           convo.next();
         },
       },
       {
+        // otherwise, repeat
         default: true,
         callback: () => {
-          convo.say('Sorry, I\'m not sure what you\'re saying.');
+          convo.say('What? I\'m not sure what you\'re saying. I\'ll ask again.');
           convo.repeat();
           convo.next();
         },
       },
     ]);
   }
+  // ask origin of directions
   function askOrigin(convo) {
     convo.ask('Where is your origin?', (origin) => {
       convo.say('Ok.');
@@ -181,26 +190,30 @@ controller.hears(['map', 'direction', 'google', 'from'], ['direct_message', 'dir
       convo.next();
     });
   }
+  // ask destination of directions
   function askDestination(origin, convo) {
     convo.ask('Where is your destination?', (destination) => {
       convo.say(`Ok! I will find directions from ${origin.text} to ${destination.text}. One moment.`);
+      // use google maps api
       const gmapsapi = process.env.GMAP_API_KEY;
       const url = `https://maps.googleapis.com/maps/api/directions/json?origin=${origin.text}&destination=${destination.text}&key=${gmapsapi}`;
       convo.say(url);
       request(url, (error, response, body) => {
-        // Check for error
+        // error in request
         if (error || response.statusCode !== 200) {
           convo.say(`Sorry! I couldn't find directions from ${origin.text} to ${destination.text}.`);
           convo.next();
         } else {
           const mapdata = JSON.parse(body);
+          // no results found
           if (mapdata.status === 'NOT_FOUND') {
             convo.say(`Sorry! I couldn't find directions from ${origin.text} to ${destination.text}.`);
             convo.next();
           } else {
-            // if results exist, use first one
+            // result exists
             convo.say('I think I found something!');
-            const replyAttachment = {
+            // summary attachment
+            const sumAttachment = {
               attachments: [{
                 title: 'Summary',
                 text: `Start: ${mapdata.routes[0].legs[0].start_address}\n` +
@@ -210,7 +223,7 @@ controller.hears(['map', 'direction', 'google', 'from'], ['direct_message', 'dir
                 color: '#C51D1D',
               }],
             };
-            convo.say(replyAttachment);
+            convo.say(sumAttachment);
             let stepString = '';
             mapdata.routes[0].legs[0].steps.forEach(step => {
               stepString = `${stepString}\n ${step.html_instructions}`;
@@ -218,6 +231,7 @@ controller.hears(['map', 'direction', 'google', 'from'], ['direct_message', 'dir
             // remove html tags
             // regular expression taken from: http://stackoverflow.com/questions/822452/strip-html-from-text-javascript
             stepString = stepString.replace(/<(?:.|\n)*?>/gm, '');
+            // steps attachment
             const stepAttachment = {
               attachments: [{
                 title: 'Directions',
@@ -232,6 +246,96 @@ controller.hears(['map', 'direction', 'google', 'from'], ['direct_message', 'dir
       });
     });
   }
+  bot.startConversation(message, askYes);
+});
+
+// play a number guessing game
+controller.hears(['number', 'game', 'guess', 'play'], ['direct_message', 'direct_mention', 'mention'], (bot, message) => {
+  // ask if user would like to play
+  function askYes(response, convo) {
+    convo.ask('Would you like to play a game?', [
+      {
+        // if yes, continue
+        pattern: bot.utterances.yes,
+        callback: () => {
+          convo.say('Great! Let\'s start!');
+          convo.say('If you ever want to stop, just say \'quit\'.');
+          const NUM = Math.floor((Math.random() * 100) + 1);
+          startGame(NUM, convo);
+          convo.next();
+        },
+      },
+      {
+        // if no, done
+        pattern: bot.utterances.no,
+        callback: () => {
+          convo.say('Okay, play with me later!');
+          convo.next();
+        },
+      },
+      {
+        // if don't understand, repeat
+        default: true,
+        callback: () => {
+          convo.say('What? I\'m not sure what you\'re saying. I\'ll ask again.');
+          convo.repeat();
+          convo.next();
+        },
+      },
+    ]);
+  }
+  // play number game
+  function startGame(NUM, convo) {
+    convo.ask('Guess the number I\'m thinking of, from 1 - 100!', (guess) => {
+      // check if guess is an integer
+      // taken from: http://stackoverflow.com/questions/14636536/how-to-check-if-a-variable-is-an-integer-in-javascript
+      convo.say(NUM);
+      if (guess !== parseInt(guess, 10)) {
+        convo.say('That\'s not a valid guess! Guess an integer number.');
+      } else if (guess < 1 || guess > 100) {
+        convo.say('That\'s not a valid guess! Guess an integer in the range 1 - 100.');
+      } else if (guess < NUM) {
+        convo.say('Nope, higher!');
+      } else if (guess > NUM) {
+        convo.say('Nope, lower!');
+      }
+      convo.next();
+    });
+  }
+  // ask where user is
+  function askWhere(food, convo) {
+    convo.ask('And where are you?', (place) => {
+      convo.say(`Ok! I can try to find ${food.text} near ${place.text}. One moment.`);
+      // use yelp api to get search data
+      yelp.search({ term: `${food.text}`, location: `${place.text}` })
+      .then((data) => {
+        if (data.businesses.length === 0) {
+          // if length 0, no search results
+          convo.say(`Sorry! I couldn't find any ${food.text} near ${place.text}.`);
+        } else {
+          // if results exist, use first one
+          const replyAttachment = {
+            text: `Rating: ${data.businesses[0].rating}`,
+            attachments: [{
+              title: `${data.businesses[0].name}`,
+              title_link: `${data.businesses[0].url}`,
+              text: `${data.businesses[0].snippet_text}`,
+              image_url: `${data.businesses[0].image_url}`,
+              color: '#7CD197',
+            }],
+          };
+          convo.say(replyAttachment);
+          convo.next();
+        }
+      })
+      .catch((err) => {
+        // if error, then due to invalid location
+        convo.say(`Sorry! I couldn't find your location, ${place.text}.`);
+      });
+      convo.next();
+    });
+  }
+  // start conversation chain
   bot.startConversation(message, askYes);
 });
 
