@@ -292,16 +292,16 @@ controller.hears(['number', 'game', 'guess', 'play'], ['direct_message', 'direct
       const intguess = parseInt(guess.text, 10);
       convo.say(`The guess is ${guess.text}`);
       convo.say(`The intguess is ${intguess}`);
-      if (guess === 'quit') {
+      if (guess.text === 'quit') {
         convo.say('Okay, bye! Thank you for playing with me.');
         convo.say(`If you're curious, the number was ${NUM}.`);
-      } else if (intguess < NUM) {
+      } else if (guess.text < NUM) {
         convo.say('Nope, higher!');
         convo.repeat();
-      } else if (intguess > NUM) {
+      } else if (guess.text > NUM) {
         convo.say('Nope, lower!');
         convo.repeat();
-      } else if (intguess === NUM) {
+      } else if (guess.text === NUM) {
         convo.say(`Yes, you got it! The number is ${intguess}!`);
         convo.say('You\'re good at this! Thank you for playing with me.');
       } else {
