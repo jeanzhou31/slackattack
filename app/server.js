@@ -112,13 +112,15 @@ controller.hears(['food', 'hungry', 'eat', 'restaurant'], ['direct_message', 'di
           // if results exist, use first one
           const replyAttachment = {
             text: `Rating: ${data.businesses[0].rating}`,
-            attachments: [{
-              title: `${data.businesses[0].name}`,
-              title_link: `${data.businesses[0].url}`,
-              text: `${data.businesses[0].snippet_text}`,
-              image_url: `${data.businesses[0].image_url}`,
-              color: '#7CD197',
-            }],
+            attachments: [
+              {
+                title: `${data.businesses[0].name}`,
+                title_link: `${data.businesses[0].url}`,
+                text: `${data.businesses[0].snippet_text}`,
+                image_url: `${data.businesses[0].image_url}`,
+                color: '#7CD197',
+              },
+            ],
           };
           convo.say('I found something!');
           convo.say(replyAttachment);
@@ -187,4 +189,5 @@ controller.hears(['map', 'direction', 'google', 'from'], ['direct_message', 'dir
 // doesn't understand
 controller.hears('', ['direct_message', 'direct_mention', 'mention'], (bot, message) => {
   bot.reply(message, 'Sorry, I\'m not sure what you\'re saying!');
+  bot.reply(message, 'Updated!');
 });
