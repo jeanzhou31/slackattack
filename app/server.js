@@ -108,6 +108,7 @@ controller.hears(['food', 'hungry', 'eat', 'restaurant'], ['direct_message', 'di
         if (data.businesses.length === 0) {
           // if length 0, no search results
           convo.say(`Sorry! I couldn't find any ${food.text} near ${place.text}.`);
+          convo.next();
         } else {
           // if results exist, use first one
           convo.say('I think I found something!!!!!');
@@ -125,13 +126,14 @@ controller.hears(['food', 'hungry', 'eat', 'restaurant'], ['direct_message', 'di
           };
           convo.say('I found something!!!!');
           convo.say(replyAttachment);
+          convo.next();
         }
       })
       .catch((err) => {
         // if error, then due to invalid location
         convo.say(`Sorry! I couldn't find your location, ${place.text}.`);
+        convo.next();
       });
-      convo.next();
     });
   }
   // start conversation chain
@@ -189,5 +191,5 @@ controller.hears(['map', 'direction', 'google', 'from'], ['direct_message', 'dir
 // doesn't understand
 controller.hears('', ['direct_message', 'direct_mention', 'mention'], (bot, message) => {
   bot.reply(message, 'Sorry, I\'m not sure what you\'re saying!');
-  bot.reply(message, 'Updated!!!!!!!!!');
+  bot.reply(message, 'Updated!!');
 });
