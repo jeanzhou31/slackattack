@@ -35,13 +35,7 @@ controller.setupWebserver(process.env.PORT || 3001, (err, webserver) => {
 
 // webhook reply
 controller.on('outgoing_webhook', (bot, message) => {
-  const replyAttachment = {
-    text: 'Hi! Don\'t worry, I\'m always awake.',
-    attachments: [{
-      image_url: 'http://giphy.com/gifs/emoji-gif-red-moon-TQPPLWqWdcQes',
-    }],
-  };
-  bot.replyPublic(message, replyAttachment);
+  bot.replyPublic(message, 'Hi! Don\'t worry, I\'m always awake. http://giphy.com/gifs/emoji-gif-red-moon-TQPPLWqWdcQes');
 });
 
 // initialize yelp
