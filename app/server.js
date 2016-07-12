@@ -261,6 +261,7 @@ controller.hears(['number', 'game', 'guess', 'play'], ['direct_message', 'direct
           convo.say('Great! Let\'s start!');
           convo.say('If you ever want to stop, just say \'quit\'.');
           const NUM = Math.floor((Math.random() * 100) + 1);
+          convo.say(NUM);
           startGame(NUM, convo);
           convo.next();
         },
@@ -289,7 +290,6 @@ controller.hears(['number', 'game', 'guess', 'play'], ['direct_message', 'direct
     convo.ask('Guess the number I\'m thinking of, from 1 - 100!', (guess) => {
       // check if guess is an integer
       // taken from: http://stackoverflow.com/questions/14636536/how-to-check-if-a-variable-is-an-integer-in-javascript
-      convo.say(NUM);
       if (guess < NUM) {
         convo.say('Nope, higher!');
       } else if (guess > NUM) {
@@ -342,5 +342,5 @@ controller.hears(['number', 'game', 'guess', 'play'], ['direct_message', 'direct
 // doesn't understand
 controller.on(['direct_message', 'direct_mention', 'mention'], (bot, message) => {
   bot.reply(message, 'Sorry, I\'m not sure what you\'re saying!');
-  bot.reply(message, 'Updated!');
+  bot.reply(message, 'Updated!!');
 });
