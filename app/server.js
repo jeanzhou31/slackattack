@@ -290,7 +290,7 @@ controller.hears(['number', 'game', 'guess', 'play'], ['direct_message', 'direct
       // check if guess is an integer
       // taken from: http://stackoverflow.com/questions/14636536/how-to-check-if-a-variable-is-an-integer-in-javascript
       convo.say(NUM);
-      if (guess !== parseInt(guess, 10)) {
+      if (guess !== toString(parseInt(guess, 10))) {
         convo.say('That\'s not a valid guess! Guess an integer number.');
       } else if (guess < 1 || guess > 100) {
         convo.say('That\'s not a valid guess! Guess an integer in the range 1 - 100.');
