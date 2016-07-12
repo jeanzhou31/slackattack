@@ -198,7 +198,7 @@ controller.hears(['map', 'direction', 'google', 'from'], ['direct_message', 'dir
           convo.say('I think I found something!');
           const replyAttachment = {
             attachments: [{
-              title: 'Summary of directions',
+              title: 'Summary',
               text: `Start: ${mapdata.routes[0].legs[0].start_address}\n` +
               `End: ${mapdata.routes[0].legs[0].end_address}\n` +
               `Travel distance: ${mapdata.routes[0].legs[0].distance.text}\n` +
@@ -211,11 +211,12 @@ controller.hears(['map', 'direction', 'google', 'from'], ['direct_message', 'dir
           mapdata.routes[0].legs[0].steps.forEach(step => {
             stepString = `${stepString}\n ${step.html_instructions}`;
           });
+          stepString.replace(/<(?:.|\n)*?>/gm, '');
           const stepAttachment = {
             attachments: [{
-              title: 'Steps',
+              title: 'Directions',
               text: `${stepString}`,
-              color: '#C51D1D',
+              color: '#88a3de',
             }],
           };
           convo.say(stepAttachment);
