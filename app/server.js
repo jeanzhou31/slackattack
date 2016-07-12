@@ -194,7 +194,6 @@ controller.hears(['map', 'direction', 'google', 'from'], ['direct_message', 'dir
       // use google maps api
       const gmapsapi = process.env.GMAP_API_KEY;
       const url = `https://maps.googleapis.com/maps/api/directions/json?origin=${origin.text}&destination=${destination.text}&key=${gmapsapi}`;
-      convo.say(url);
       request(url, (error, response, body) => {
         // error in request
         if (error || response.statusCode !== 200) {
