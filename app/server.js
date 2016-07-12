@@ -295,6 +295,9 @@ controller.hears(['number', 'game', 'guess', 'play'], ['direct_message', 'direct
       if (guess.text === 'quit') {
         convo.say('Okay, bye! Thank you for playing with me.');
         convo.say(`If you're curious, the number was ${NUM}.`);
+      } else if (guess.text !== intguess.toString()) {
+        convo.say('That\'s not a valid guess! Guess an integer number from 1 - 100.');
+        convo.repeat();
       } else if (guess.text < NUM) {
         convo.say('Nope, higher!');
         convo.repeat();
@@ -305,7 +308,7 @@ controller.hears(['number', 'game', 'guess', 'play'], ['direct_message', 'direct
         convo.say(`Yes, you got it! The number is ${intguess}!`);
         convo.say('You\'re good at this! Thank you for playing with me.');
       } else {
-        convo.say('That\'s not a valid guess! Guess a number.');
+        convo.say('That\'s not a valid guess! Guess an integer number from 1 - 100.');
         convo.repeat();
       }
       convo.next();
