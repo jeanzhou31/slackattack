@@ -8,15 +8,12 @@ import Yelp from 'yelp';
 
 // used guide for request module: http://blog.modulus.io/node.js-tutorial-how-to-use-request-module
 const request = require('request');
-// used guide for mongo storage: https://github.com/howdyai/botkit-storage-mongo
-const mongoStorage = require('botkit-storage-mongo')({ mongoUri: '...' });
 
 console.log('starting bot');
 
 // botkit controller
 const controller = botkit.slackbot({
   debug: false,
-  storage: mongoStorage,
 });
 
 // initialize slackbot
@@ -150,11 +147,6 @@ controller.hears(['food', 'hungry', 'eat', 'restaurant'], ['direct_message', 'di
       });
     });
   }
-  bot.api.users.info({ user: message.user }, (err, res) => {
-    if (res) {
-      controller.storage.users.save({ id: message.user, action: 'food' });
-    }
-  });
   // start conversation chain
   bot.startConversation(message, askYes);
 });
@@ -256,11 +248,6 @@ controller.hears(['map', 'direction', 'google', 'from'], ['direct_message', 'dir
       });
     });
   }
-  bot.api.users.info({ user: message.user }, (err, res) => {
-    if (res) {
-      controller.storage.users.save({ id: message.user, action: 'directions' });
-    }
-  });
   bot.startConversation(message, askYes);
 });
 
@@ -325,56 +312,6 @@ controller.hears(['number', 'game', 'guess', 'play'], ['direct_message', 'direct
       }
       convo.next();
     });
-  }
-  bot.api.users.info({ user: message.user }, (err, res) => {
-    if (res) {
-      controller.storage.users.save({ id: message.user, action: 'game' });
-    }
-  });
-  // start conversation chain
-  bot.startConversation(message, askYes);
-});
-
-// using storage to tell last action
-controller.hears(['history', 'storage', 'talk'], ['direct_message', 'direct_mention', 'mention'], (bot, message) => {
-  // ask if user would like to see history
-  function askYes(response, convo) {
-    convo.ask('Would you like me to remind you what we last talked about?', [
-      {
-        // if yes, continue
-        pattern: bot.utterances.yes,
-        callback: () => {
-          convo.say('Great! I\'d love to help.');
-          bot.api.users.info({ user: message.user }, (err, res) => {
-            if (res) {
-              const result = controller.storage.users.get(message.user);
-              convo.say('Got');
-              convo.say(result.action);
-            } else {
-              convo.say('Nothing');
-            }
-          });
-          convo.next();
-        },
-      },
-      {
-        // if no, done
-        pattern: bot.utterances.no,
-        callback: () => {
-          convo.say('I understand, perhaps later.');
-          convo.next();
-        },
-      },
-      {
-        // if don't understand, repeat
-        default: true,
-        callback: () => {
-          convo.say('What? I\'m not sure what you\'re saying. I\'ll ask again.');
-          convo.repeat();
-          convo.next();
-        },
-      },
-    ]);
   }
   // start conversation chain
   bot.startConversation(message, askYes);
