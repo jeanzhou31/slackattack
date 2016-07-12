@@ -33,7 +33,6 @@ controller.on('outgoing_webhook', (bot, message) => {
 });
 
 // initialize yelp
-
 const yelp = new Yelp({
   consumer_key: process.env.YELP_CONSUMER_KEY,
   consumer_secret: process.env.YELP_CONSUMER_SECRET,
@@ -41,7 +40,7 @@ const yelp = new Yelp({
   token_secret: process.env.YELP_TOKEN_SECRET,
 });
 
-// example hello response
+// hello response
 controller.hears(['hello', 'hi', 'howdy'], ['direct_message', 'direct_mention', 'mention'], (bot, message) => {
   bot.api.users.info({ user: message.user }, (err, res) => {
     if (res) {
@@ -55,78 +54,84 @@ controller.hears(['hello', 'hi', 'howdy'], ['direct_message', 'direct_mention', 
 // help
 controller.hears('help', ['direct_message', 'direct_mention', 'mention'], (bot, message) => {
   bot.reply(message, 'Hi! I\'m jean_bot!');
+  bot.reply(message, 'I can give you food recommendations and map directions.');
 });
 
-// food
+// food recommendations using yelp
 controller.hears(['food', 'hungry', 'eat', 'restaurant'], ['direct_message', 'direct_mention', 'mention'], (bot, message) => {
+  // ask if user would like a food recommendation
   function askYes(response, convo) {
     convo.ask('Would you like food recommendations near you?', [
       {
+        // if yes, continue
         pattern: bot.utterances.yes,
         callback: () => {
-          convo.say('Great! I will continue...');
+          convo.say('Great! I\'d love to help.');
           askFood(convo);
           convo.next();
         },
       },
       {
+        // if no, done
         pattern: bot.utterances.no,
         callback: () => {
-          convo.say('Perhaps later.');
+          convo.say('I understand, perhaps later.');
           convo.next();
         },
       },
       {
+        // if don't understand, repeat
         default: true,
         callback: () => {
-          convo.say('Sorry, I\'m not sure what you\'re saying.');
+          convo.say('What? I\'m not sure what you\'re saying.');
           convo.repeat();
           convo.next();
         },
       },
     ]);
   }
+  // ask what kind of food
   function askFood(convo) {
     convo.ask('What kind of food do you want?', (food) => {
-      convo.say('Ok.');
+      convo.say('Ok, sounds good.');
       askWhere(food, convo);
       convo.next();
     });
   }
+  // ask where user is
   function askWhere(food, convo) {
-    convo.ask('Where are you?', (place) => {
-      convo.say(`Ok! I can find ${food.text} in ${place.text}. One moment.`);
+    convo.ask('And where are you?', (place) => {
+      convo.say(`Ok! I can try to find ${food.text} near ${place.text}. One moment.`);
+      // use yelp api to get search data
       yelp.search({ term: `${food.text}`, location: `${place.text}` })
       .then((data) => {
         if (data.businesses.length === 0) {
-          convo.say(`Sorry! I couldn't find ${food.text} in ${place.text}!`);
+          // if length 0, no search results
+          convo.say(`Sorry! I couldn't find any ${food.text} near ${place.text}!`);
         } else {
+          // if results exist, yse first one
           const replyAttachment = {
-            text: `rating: ${data.businesses[0].rating}`,
-            attachments: [
-              {
-                fallback: 'To be useful, I need you to invite me in a channel.',
-                title: `${data.businesses[0].name}`,
-                title_link: `${data.businesses[0].url}`,
-                text: `${data.businesses[0].snippet_text}`,
-                image_url: `${data.businesses[0].image_url}`,
-                color: '#7CD197',
-              },
-            ],
+            text: `Rating: ${data.businesses[0].rating}`,
+            attachments: [{
+              title: data.businesses[0].name,
+              title_link: data.businesses[0].url,
+              text: data.businesses[0].snippet_text,
+              image_url: data.businesses[0].image_url,
+              color: '#7CD197',
+            }],
           };
           bot.reply(message, replyAttachment);
           convo.next();
         }
-        data.businesses.forEach(business => {
-          // do something with business
-        });
       })
       .catch((err) => {
-        convo.say(`Sorry! I couldn't find you location, ${place.text}.`);
+        // if error, then due to invalid location
+        convo.say(`Sorry! I couldn't find your location, ${place.text}.`);
       });
       convo.next();
     });
   }
+  // start conversation chain
   bot.startConversation(message, askYes);
 });
 
@@ -178,8 +183,7 @@ controller.hears(['map', 'direction', 'google', 'from'], ['direct_message', 'dir
   bot.startConversation(message, askYes);
 });
 
-
-// otherwise, doesn't understand
+// doesn't understand
 controller.hears('', ['direct_message', 'direct_mention', 'mention'], (bot, message) => {
   bot.reply(message, 'Sorry, I\'m not sure what you\'re saying!');
 });
