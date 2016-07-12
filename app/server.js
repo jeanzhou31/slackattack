@@ -290,14 +290,14 @@ controller.hears(['number', 'game', 'guess', 'play'], ['direct_message', 'direct
       // check if guess is an integer
       // taken from: http://stackoverflow.com/questions/14636536/how-to-check-if-a-variable-is-an-integer-in-javascript
       convo.say(NUM);
-      if (guess !== toString(parseInt(guess, 10))) {
-        convo.say('That\'s not a valid guess! Guess an integer number.');
-      } else if (guess < 1 || guess > 100) {
-        convo.say('That\'s not a valid guess! Guess an integer in the range 1 - 100.');
-      } else if (guess < NUM) {
+      if (guess < NUM) {
         convo.say('Nope, higher!');
       } else if (guess > NUM) {
         convo.say('Nope, lower!');
+      } else if (parseInt(guess, 10) === NUM) {
+        convo.say('Yes!');
+      } else {
+        convo.say('That\'s not a valid guess! Guess an integer number from 1 - 100.');
       }
       convo.next();
     });
@@ -342,5 +342,5 @@ controller.hears(['number', 'game', 'guess', 'play'], ['direct_message', 'direct
 // doesn't understand
 controller.on(['direct_message', 'direct_mention', 'mention'], (bot, message) => {
   bot.reply(message, 'Sorry, I\'m not sure what you\'re saying!');
-  bot.reply(message, 'Updated!!');
+  bot.reply(message, 'Updated!');
 });
